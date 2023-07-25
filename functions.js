@@ -12,7 +12,7 @@ const ruta = process.argv[2];
 // console.log('SOY PROCESS', process.argv);
 
 // Creando constante para ver si existe la ruta.
-const existsPath = (receivedPath) => fs.existsSync(receivedPath);
+export const existsPath = (receivedPath) => fs.existsSync(receivedPath);
 console.log('soy Existe el archivo', existsPath);
 // console.log('ruta relativa:', ruta);
 // FUNCIóN para convertir la ruta a absoluta.
@@ -43,19 +43,7 @@ export function fileNotMd(receivedPath) {
   return path.extname(receivedPath) !== '.md';
 }
 fileNotMd(ruta);
-
-// FUNCIÓN para comprobar si la ruta es un directorio.
-export function isDirectory(receivedPath) {
-  const directory = fs.statSync(receivedPath);
-  // fs.statSync es una función sincrónica que devuelve un objeto que
-  // contiene información sobre el archivo o directorio.
-  return directory.isDirectory();
-}
-
-isDirectory(ruta);
-console.log(isDirectory(ruta), 'ISDIRECTORY');
-
-// FUNCIÓN para extraer archivos md
+// FUNCIÓN para extraer archivos md RECURSIVIDAD
 export const extractMdFiles = (receivedPath) => {
   let mdFiles = [];
 
@@ -74,6 +62,17 @@ export const extractMdFiles = (receivedPath) => {
 };
 console.log('Archivos MD encontrados:', extractMdFiles(ruta));
 
+// FUNCIÓN para comprobar si la ruta es un directorio.
+export function isDirectory(receivedPath) {
+  const directory = fs.statSync(receivedPath);
+  // fs.statSync es una función sincrónica que devuelve un objeto que
+  // contiene información sobre el archivo o directorio.
+  return directory.isDirectory();
+}
+
+isDirectory(ruta);
+console.log(isDirectory(ruta), 'ISDIRECTORY');
+
 // FUNCIÓN que lea el array con mdFiles
 export const readMdfiles = (mdFiles) => {
   const dataMdfiles = [];
@@ -84,10 +83,10 @@ export const readMdfiles = (mdFiles) => {
   console.log(dataMdfiles, 'soy dataMdfiles');
   return dataMdfiles;
 };
-const contentFileMd = readMdfiles(extractMdFiles(ruta));
+export const contentFileMd = readMdfiles(extractMdFiles(ruta));
 
 // FUNCIÓN para encontrar los enlaces en el contenido de un archivo MD
-const findLinksInMdContent = (dataMdfiles, filePath) => {
+export const extractLinksInMd = (dataMdfiles, filePath) => {
   const regex = /\[(.*?)\]\((.*?)\)/g;
   const links = [];
   let match = regex.exec(dataMdfiles);
@@ -101,7 +100,7 @@ const findLinksInMdContent = (dataMdfiles, filePath) => {
 };
 
 // FUNCIÓN para validar los enlaces encontrados
-function validateLinks(links) {
+export function validateLinks(links) {
   const promises = links.map((link) => {
     return axios
       .get(link.url)
@@ -116,6 +115,7 @@ function validateLinks(links) {
       })
       .catch((error) => {
         if (error.response) {
+          console.log('ERROR-RESPONSE', error.response);
           return {
             ...link,
             status: error.response.status,
@@ -134,7 +134,7 @@ function validateLinks(links) {
 }
 
 // FUNCIÓN para obtener las estadísticas de los enlaces, incluyendo los broken links
-function getLinksStats(links) {
+export function getLinksStats(links) {
   return new Promise((resolve, reject) => {
     try {
       const totalLinks = links.length;
@@ -155,7 +155,10 @@ function getLinksStats(links) {
 }
 
 // Llamar a la función para obtener los enlaces
-const linksInMdFiles = findLinksInMdContent(contentFileMd, path.resolve(ruta));
+export const linksInMdFiles = extractLinksInMd(
+  contentFileMd,
+  path.resolve(ruta),
+);
 
 // Llamar a la función para validar los enlaces
 validateLinks(linksInMdFiles)
