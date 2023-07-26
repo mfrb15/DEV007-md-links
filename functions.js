@@ -38,25 +38,24 @@ export function fileIsMd(receivedPath) {
 fileIsMd(ruta);
 
 // FUNCIÓN para ver si el archivo NO es md
-export function fileNotMd(receivedPath) {
-  console.log('NO SOY UN archivo Md ');
-  return path.extname(receivedPath) !== '.md';
-}
-fileNotMd(ruta);
+// export function fileNotMd(receivedPath) {
+//   console.log('NO SOY UN archivo Md ');
+//   return path.extname(receivedPath) !== '.md';
+// }
+// fileNotMd(ruta);
 // FUNCIÓN para extraer archivos md RECURSIVIDAD
 export const extractMdFiles = (receivedPath) => {
   let mdFiles = [];
 
-  const files = fs.readdirSync(receivedPath);
-  files.forEach((file) => {
-    const pathFiles = path.join(receivedPath, file);
-    const stats = fs.statSync(pathFiles);
-    if (stats.isDirectory()) {
+  if (fs.statSync(receivedPath).isDirectory()) {
+    const files = fs.readdirSync(receivedPath);
+    files.forEach((file) => {
+      const pathFiles = path.join(receivedPath, file);
       mdFiles = mdFiles.concat(extractMdFiles(pathFiles));
-    } else if (path.extname(file) === '.md') {
-      mdFiles.push(pathFiles);
-    }
-  });
+    });
+  } else if (path.extname(receivedPath) === '.md') {
+    mdFiles.push(receivedPath);
+  }
 
   return mdFiles;
 };
@@ -90,6 +89,7 @@ export const extractLinksInMd = (dataMdfiles, filePaths) => {
   const regex = /\[(.*?)\]\((.*?)\)/g;
   const allLinks = [];
   dataMdfiles.forEach((content, index) => {
+    //guardar en un array la ruta de cada uno en la recursividad
     const links = [];
     let match = regex.exec(dataMdfiles);
     while (match !== null) {

@@ -7,7 +7,6 @@ import {
   existsPath,
   pathToAbsolute,
   isDirectory,
-  fileIsMd,
   extractMdFiles,
   readMdfiles,
   extractLinksInMd,
@@ -31,11 +30,10 @@ export const mdLinks = (path) =>
     let arrayMdFiles = [];
     if (isDirectory(pathAbsolute)) {
       arrayMdFiles = extractMdFiles(pathAbsolute);
-    } else if (fileIsMd(pathAbsolute)) {
-      // Si la ruta es un archivo md, simplemente lo agregamos al array
+    } else {
       arrayMdFiles.push(pathAbsolute);
     }
-    arrayMdFiles = extractMdFiles(pathAbsolute);
+
     const mdArrayData = readMdfiles(arrayMdFiles);
     console.log('SOY MDARRAYDATA', mdArrayData);
 
