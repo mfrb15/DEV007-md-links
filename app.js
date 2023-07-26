@@ -12,47 +12,61 @@ import {
   extractLinksInMd,
   validateLinks,
   getLinksStats,
-  // eslint-disable-next-line import/extensions
 } from './functions.js';
 
-const ruta = process.argv[2];
+// const ruta = process.argv[2];
 
-export const mdLinks = (path) =>
-  new Promise((resolve, reject) => {
-    let pathAbsolute = '';
-    const pathExists = existsPath(path);
-    if (pathExists) {
-      pathAbsolute = pathToAbsolute(path);
-      console.log('Ruta Absoluta', pathAbsolute);
-    }
-
-    // Comprobar si la ruta es un directorio o archivo md
-    let arrayMdFiles = [];
-    if (isDirectory(pathAbsolute)) {
-      arrayMdFiles = extractMdFiles(pathAbsolute);
+export const mdLinks = (document, options) => {
+  return new Promise((resolve, reject) => {
+    let routeAbsolute = '';
+    const isExists = existsPath(document);
+    if (isExists) {
+      routeAbsolute = pathToAbsolute(document);
     } else {
-      arrayMdFiles.push(pathAbsolute);
+      reject(Error('Tu ruta no existe'));
+      return;
     }
 
-    const mdArrayData = readMdfiles(arrayMdFiles);
-    console.log('SOY MDARRAYDATA', mdArrayData);
+    let archivos = [];
+    if (isDirectory(routeAbsolute)) {
+      archivos = extractMdFiles(routeAbsolute);
+    }
+    const mdArrayData = readMdfiles(archivos);
+    const objectLinks = extractLinksInMd(mdArrayData, archivos);
 
-    const objectLinks = extractLinksInMd(mdArrayData, arrayMdFiles);
-    validateLinks(objectLinks)
-      .then((validatedLinks) => {
-        console.log('LINKS VALIDADOS', validatedLinks);
-        return getLinksStats(validatedLinks);
-      })
-      .then((linkStats) => {
-        console.log(linkStats);
-        resolve(console.log('Links;', objectLinks));
-      })
-      .catch((error) => {
-        console.error('Ocurrió un error al validar los enlaces:', error);
-        reject(new Error('La ruta no existe'));
-      });
+    if (options.validate && options.stats) {
+      validateLinks(objectLinks)
+        .then((validatedLinks) => {
+          getLinksStats(validatedLinks, options.validate)
+            .then((res) => resolve(res))
+            .catch(() =>
+              reject(new Error('Hubo un problema al validar links')));
+        })
+        .catch((error) => {
+          console.error('Ocurrió un error al validar los enlaces:', error);
+          reject(error);
+        });
+    } else if (options.validate) {
+      validateLinks(objectLinks)
+        .then((validatedLinks) => {
+          resolve(validatedLinks);
+        })
+        .catch((error) => {
+          console.error('Ocurrió un error al validar los enlaces:', error);
+          reject(error);
+        });
+    } else if (options.stats) {
+      getLinksStats(objectLinks)
+        .then((linkStats) => {
+          resolve(linkStats);
+        })
+        .catch((error) => {
+          console.error('Ocurrió un error al obtener las estadísticas:', error);
+          reject(error);
+        });
+    } else {
+      resolve(objectLinks);
+    }
   });
-
-mdLinks(ruta);
-
-export default mdLinks;
+};
+// console.log(20000, mdLinks(ruta));

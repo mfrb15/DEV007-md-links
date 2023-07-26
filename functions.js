@@ -12,16 +12,23 @@ const ruta = process.argv[2];
 // console.log('SOY PROCESS', process.argv);
 
 // Creando constante para ver si existe la ruta.
-export const existsPath = (receivedPath) => fs.existsSync(receivedPath);
-console.log('soy Existe el archivo', existsPath);
+// export const existsPath = (receivedPath) => fs.existsSync(receivedPath);
+export function existsPath(receivedPath) {
+  // parametro
+  if (fs.existsSync(receivedPath)) {
+    return true;
+  } else {
+    return false;
+  }
+}
+console.log(1000000, existsPath(ruta));
+// console.log('soy Existe el archivo', existsPath);
 // console.log('ruta relativa:', ruta);
 // FUNCIóN para convertir la ruta a absoluta.
 export function pathToAbsolute(receivedPath) {
-  if (existsPath === false) {
-    console.log('NO HAY RUTA');
-  } else if (path.isAbsolute(receivedPath) === false) {
+  if (path.isAbsolute(receivedPath) === false) {
     const pathAbsolute = path.resolve(receivedPath);
-    console.log('SOY CONVERTIENDO EN ABSOLUTA, ', pathAbsolute);
+    // console.log('SOY CONVERTIENDO EN ABSOLUTA, ', pathAbsolute);
     return pathAbsolute;
   } else {
     console.log('LA RUTA YA ERA ABSOLUTA');
@@ -32,7 +39,7 @@ pathToAbsolute(ruta);
 
 // FUNCIÓN para ver si el archivo es md
 export function fileIsMd(receivedPath) {
-  console.log('Soy un archivo Md ');
+  // console.log('Soy un archivo Md ');
   return path.extname(receivedPath) === '.md';
 }
 fileIsMd(ruta);
@@ -59,7 +66,7 @@ export const extractMdFiles = (receivedPath) => {
 
   return mdFiles;
 };
-console.log('Archivos MD encontrados:', extractMdFiles(ruta));
+// console.log('Archivos MD encontrados:', extractMdFiles(ruta));
 
 // FUNCIÓN para comprobar si la ruta es un directorio.
 export function isDirectory(receivedPath) {
@@ -69,8 +76,8 @@ export function isDirectory(receivedPath) {
   return directory.isDirectory();
 }
 
-isDirectory(ruta);
-console.log(isDirectory(ruta), 'ISDIRECTORY');
+// isDirectory(ruta);
+// console.log(isDirectory(ruta), 'ISDIRECTORY');
 
 // FUNCIÓN que lea el array con mdFiles
 export const readMdfiles = (mdFiles) => {
@@ -79,28 +86,27 @@ export const readMdfiles = (mdFiles) => {
     const content = fs.readFileSync(file, 'utf-8');
     dataMdfiles.push(content);
   });
-  console.log(dataMdfiles, 'soy dataMdfiles');
+  // console.log(dataMdfiles, 'soy dataMdfiles');
   return dataMdfiles;
 };
-export const contentFileMd = readMdfiles(extractMdFiles(ruta));
+//  const contentFileMd = readMdfiles(extractMdFiles(ruta));
 
 // FUNCIÓN para encontrar los enlaces en el contenido de un archivo MD
 export const extractLinksInMd = (dataMdfiles, filePaths) => {
   const regex = /\[(.*?)\]\((.*?)\)/g;
   const allLinks = [];
   dataMdfiles.forEach((content, index) => {
-    //guardar en un array la ruta de cada uno en la recursividad
+    // Guardar en un array la ruta de cada uno en la recursividad
     const links = [];
     let match = regex.exec(dataMdfiles);
     while (match !== null) {
       links.push({ text: match[1], url: match[2], filePath: filePaths });
-      console.log('SOY LINKS', links);
+      // console.log('SOY LINKS', links);
       match = regex.exec(dataMdfiles);
     }
     allLinks.push(...links);
   });
 
-  console.log('somos los links', allLinks);
   return allLinks;
 };
 
@@ -120,7 +126,7 @@ export function validateLinks(links) {
       })
       .catch((error) => {
         if (error.response) {
-          console.log('ERROR-RESPONSE', error.response);
+          // console.log(40000, 'ERROR-RESPONSE', error.response.status);
           return {
             ...link,
             status: error.response.status,
@@ -139,46 +145,42 @@ export function validateLinks(links) {
 }
 
 // FUNCIÓN para obtener las estadísticas de los enlaces, incluyendo los broken links
-export function getLinksStats(links) {
+export function getLinksStats(links, optionValidate) {
   return new Promise((resolve, reject) => {
-    try {
-      const totalLinks = links.length;
-      const uniqueLinks = new Set(links.map((link) => link.url)).size;
-      console.log('SOY UNIQUE LINKS', uniqueLinks);
-      const brokenLinks = links.filter((link) => link.OK === 'FAIL').length;
-      console.log('SOY BROKEN LINKS', brokenLinks); // Contar los links rotos
-      const stats = {
-        total: totalLinks,
-        unique: uniqueLinks,
-        broken: brokenLinks,
-      };
-      resolve(stats);
-    } catch (error) {
-      reject(error.message);
+    const totalLinks = links.length;
+    const uniqueLinks = new Set(links.map((link) => link.url)).size;
+    const stats = {
+      total: totalLinks,
+      unique: uniqueLinks,
+    };
+    if (optionValidate) {
+      stats.working = links.filter((obj) => obj.mensaje == 'OK').length;
+      stats.broken = links.filter((obj) => obj.mensaje == 'Fail').length;
     }
+    resolve(stats);
   });
 }
 
 // Llamar a la función para obtener los enlaces
-export const linksInMdFiles = extractLinksInMd(
-  contentFileMd,
-  extractMdFiles(ruta),
-);
+// export const linksInMdFiles = extractLinksInMd(
+//   contentFileMd,
+//   extractMdFiles(ruta),
+// );
 
 // Llamar a la función para validar los enlaces
-validateLinks(linksInMdFiles)
-  .then((validatedLinksInMdFiles) => {
-    // Mostrar los enlaces validados en la consola
-    console.log('Enlaces válidos y falsos encontrados en los archivos MD:');
-    console.log(validatedLinksInMdFiles);
+// validateLinks(linksInMdFiles)
+//   .then((validatedLinksInMdFiles) => {
+//     // Mostrar los enlaces validados en la consola
+//     console.log('Enlaces válidos y falsos encontrados en los archivos MD:');
+//     console.log(validatedLinksInMdFiles);
 
-    // Obtener y mostrar las estadísticas de los enlaces, incluyendo los broken links
-    return getLinksStats(validatedLinksInMdFiles);
-  })
-  .then((linksStats) => {
-    console.log('Estadísticas de los enlaces:');
-    console.log(linksStats);
-  })
-  .catch((error) => {
-    console.error('Ocurrió un error al validar los enlaces:', error);
-  });
+//     // Obtener y mostrar las estadísticas de los enlaces, incluyendo los broken links
+//     return getLinksStats(validatedLinksInMdFiles);
+//   })
+//   .then((linksStats) => {
+//     console.log('Estadísticas de los enlaces:');
+//     console.log(linksStats);
+//   })
+//   .catch((error) => {
+//     console.error('Ocurrió un error al validar los enlaces:', error);
+//   });
