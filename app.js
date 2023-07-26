@@ -35,11 +35,11 @@ export const mdLinks = (path) =>
       // Si la ruta es un archivo md, simplemente lo agregamos al array
       arrayMdFiles.push(pathAbsolute);
     }
-
+    arrayMdFiles = extractMdFiles(pathAbsolute);
     const mdArrayData = readMdfiles(arrayMdFiles);
     console.log('SOY MDARRAYDATA', mdArrayData);
 
-    const objectLinks = extractLinksInMd(mdArrayData);
+    const objectLinks = extractLinksInMd(mdArrayData, arrayMdFiles);
     validateLinks(objectLinks)
       .then((validatedLinks) => {
         console.log('LINKS VALIDADOS', validatedLinks);

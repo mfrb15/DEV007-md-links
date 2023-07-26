@@ -86,17 +86,22 @@ export const readMdfiles = (mdFiles) => {
 export const contentFileMd = readMdfiles(extractMdFiles(ruta));
 
 // FUNCIÓN para encontrar los enlaces en el contenido de un archivo MD
-export const extractLinksInMd = (dataMdfiles, filePath) => {
+export const extractLinksInMd = (dataMdfiles, filePaths) => {
   const regex = /\[(.*?)\]\((.*?)\)/g;
-  const links = [];
-  let match = regex.exec(dataMdfiles);
-  while (match !== null) {
-    links.push({ text: match[1], url: match[2], filePath: filePath });
-    console.log('SOY LINKS', links);
-    match = regex.exec(dataMdfiles);
-  }
-  console.log('somos los links', links);
-  return links;
+  const allLinks = [];
+  dataMdfiles.forEach((content, index) => {
+    const links = [];
+    let match = regex.exec(dataMdfiles);
+    while (match !== null) {
+      links.push({ text: match[1], url: match[2], filePath: filePaths });
+      console.log('SOY LINKS', links);
+      match = regex.exec(dataMdfiles);
+    }
+    allLinks.push(...links);
+  });
+
+  console.log('somos los links', allLinks);
+  return allLinks;
 };
 
 // FUNCIÓN para validar los enlaces encontrados
@@ -106,7 +111,7 @@ export function validateLinks(links) {
       .get(link.url)
       .then((response) => {
         const isValid = response.status >= 200 && response.status < 400;
-        console.log('Soy es valid', isValid);
+        // console.log('Soy es valid', isValid);
         return {
           ...link,
           status: response.status,
@@ -157,7 +162,7 @@ export function getLinksStats(links) {
 // Llamar a la función para obtener los enlaces
 export const linksInMdFiles = extractLinksInMd(
   contentFileMd,
-  path.resolve(ruta),
+  extractMdFiles(ruta),
 );
 
 // Llamar a la función para validar los enlaces
