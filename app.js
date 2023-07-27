@@ -12,16 +12,18 @@ import {
   extractLinksInMd,
   validateLinks,
   getLinksStats,
+  fileIsMd,
 } from './functions.js';
 
 // const ruta = process.argv[2];
 
-export const mdLinks = (document, options) => {
-  return new Promise((resolve, reject) => {
+export const mdLinks = (ruta, options) => {
+  // console.log(ruta, 'soy ruta');
+  return new Promise((resolve, reject) => { // new promise realizará operaciones asíncronas y se resolverá o rechazará cuando las operaciones se completen
     let routeAbsolute = '';
-    const isExists = existsPath(document);
+    const isExists = existsPath(ruta);
     if (isExists) {
-      routeAbsolute = pathToAbsolute(document);
+      routeAbsolute = pathToAbsolute(ruta);
     } else {
       reject(Error('Tu ruta no existe'));
       return;
@@ -30,9 +32,14 @@ export const mdLinks = (document, options) => {
     let archivos = [];
     if (isDirectory(routeAbsolute)) {
       archivos = extractMdFiles(routeAbsolute);
+    } else if (fileIsMd(routeAbsolute)) {
+      archivos.push(routeAbsolute);
+      // console.log(archivos, 'soy archivos');
     }
+
     const mdArrayData = readMdfiles(archivos);
     const objectLinks = extractLinksInMd(mdArrayData, archivos);
+    // console.log('Hola', objectLinks);
 
     if (options.validate && options.stats) {
       validateLinks(objectLinks)

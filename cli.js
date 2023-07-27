@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import chalk from 'chalk';
 import { mdLinks } from './app.js';
 
 const ruta = process.argv[2];
@@ -12,29 +13,33 @@ const options = {
 
 mdLinks(ruta, options)
   .then((links) => {
-    // Si el usuario ingresa --validate Obj(Href, text, file, stattus, OK)
     if (options.validate && options.stats) {
-      console.log('--validate --stats');
-      // Si el usuario ingresa --stats Obj(total, Unique)
+      console.log(chalk.bold.blueBright('Total: ', links.total));
+      console.log(chalk.bold.yellowBright('Unique: ', links.unique));
+      console.log(chalk.bold.greenBright('Working: ', links.working));
+      console.log(chalk.bold.redBright('Broken: ', links.broken));
     } else if (options.stats) {
-      console.log('--stats');
+      console.log(chalk.bold.blueBright('Total: ', links.total));
+      console.log(chalk.bold.yellowBright('Unique: ', links.unique));
     } else if (options.validate) {
       links.forEach((link) => {
-        console.log(`url: ${link.url}
-          text: ${link.text}
-          file: ${link.file}
-          status: ${link.status}
-          ok: ${link.ok}`);
+        console.log(chalk.bold.magenta(`
+        url: ${link.url}
+        text: ${link.text}
+        file: ${link.file}
+        status: ${link.status}
+        OK: ${link.OK}`));
       });
     } else {
-      console.log('ninguno');
+      links.forEach((link) => {
+        console.log(chalk.bold.magenta(`
+      url: ${link.url}
+      text: ${link.text}
+      file: ${link.file}
+                    `));
+      });
     }
-
-    // console.log('total:', links.total);
-    // Si el usuario no ingresa opciones
-    // console.log(result);
   })
   .catch((error) => {
-    // Handle any errors that occur during processing
     console.error('Error:', error);
   });

@@ -21,9 +21,7 @@ export function existsPath(receivedPath) {
     return false;
   }
 }
-console.log(1000000, existsPath(ruta));
-// console.log('soy Existe el archivo', existsPath);
-// console.log('ruta relativa:', ruta);
+
 // FUNCIóN para convertir la ruta a absoluta.
 export function pathToAbsolute(receivedPath) {
   if (path.isAbsolute(receivedPath) === false) {
@@ -42,14 +40,8 @@ export function fileIsMd(receivedPath) {
   // console.log('Soy un archivo Md ');
   return path.extname(receivedPath) === '.md';
 }
-fileIsMd(ruta);
+// console.log(fileIsMd(ruta), 'soy fileismd');
 
-// FUNCIÓN para ver si el archivo NO es md
-// export function fileNotMd(receivedPath) {
-//   console.log('NO SOY UN archivo Md ');
-//   return path.extname(receivedPath) !== '.md';
-// }
-// fileNotMd(ruta);
 // FUNCIÓN para extraer archivos md RECURSIVIDAD
 export const extractMdFiles = (receivedPath) => {
   let mdFiles = [];
@@ -86,6 +78,7 @@ export const readMdfiles = (mdFiles) => {
     const content = fs.readFileSync(file, 'utf-8');
     dataMdfiles.push(content);
   });
+  // console.log('dataMdfiles', dataMdfiles)
   // console.log(dataMdfiles, 'soy dataMdfiles');
   return dataMdfiles;
 };
@@ -100,13 +93,13 @@ export const extractLinksInMd = (dataMdfiles, filePaths) => {
     const links = [];
     let match = regex.exec(dataMdfiles);
     while (match !== null) {
-      links.push({ text: match[1], url: match[2], filePath: filePaths });
+      links.push({ text: match[1], url: match[2], file: filePaths });
       // console.log('SOY LINKS', links);
       match = regex.exec(dataMdfiles);
     }
     allLinks.push(...links);
   });
-
+  // console.log('allLinks', allLinks)
   return allLinks;
 };
 
@@ -145,21 +138,26 @@ export function validateLinks(links) {
 }
 
 // FUNCIÓN para obtener las estadísticas de los enlaces, incluyendo los broken links
-export function getLinksStats(links, optionValidate) {
-  return new Promise((resolve, reject) => {
-    const totalLinks = links.length;
-    const uniqueLinks = new Set(links.map((link) => link.url)).size;
-    const stats = {
-      total: totalLinks,
-      unique: uniqueLinks,
+export const getLinksStats = (links, optionValidate) =>
+    new Promise((resolve, reject) => {
+  try {
+    let stats = {
+      total: links.length,
+      unique: new Set(links.map((link) => link.url)).size,
     };
     if (optionValidate) {
-      stats.working = links.filter((obj) => obj.mensaje == 'OK').length;
-      stats.broken = links.filter((obj) => obj.mensaje == 'Fail').length;
+
+      stats.broken = links.filter((link) => link.OK == 'FAIL').length;
+
+      stats.working = links.filter((link) => link.OK == 'OK').length;
+      console.log(stats);
+
     }
     resolve(stats);
-  });
-}
+  } catch (error) {
+    reject(error.message);
+  }
+});
 
 // Llamar a la función para obtener los enlaces
 // export const linksInMdFiles = extractLinksInMd(
