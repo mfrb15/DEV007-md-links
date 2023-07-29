@@ -1,3 +1,4 @@
+/* eslint-disable import/extensions */
 /* eslint-disable implicit-arrow-linebreak */
 /* eslint-disable max-len */
 /* eslint-disable no-trailing-spaces */
@@ -14,8 +15,6 @@ import {
   getLinksStats,
   fileIsMd,
 } from './functions.js';
-
-// const ruta = process.argv[2];
 
 export const mdLinks = (ruta, options) => {
   // console.log(ruta, 'soy ruta');
@@ -76,4 +75,3 @@ export const mdLinks = (ruta, options) => {
     }
   });
 };
-// console.log(20000, mdLinks(ruta));

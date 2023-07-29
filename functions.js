@@ -9,10 +9,6 @@ import axios from 'axios';
 
 const ruta = process.argv[2];
 
-// console.log('SOY PROCESS', process.argv);
-
-// Creando constante para ver si existe la ruta.
-// export const existsPath = (receivedPath) => fs.existsSync(receivedPath);
 export function existsPath(receivedPath) {
   // parametro
   if (fs.existsSync(receivedPath)) {
@@ -22,27 +18,33 @@ export function existsPath(receivedPath) {
   }
 }
 
-// FUNCIóN para convertir la ruta a absoluta.
+// Función para convertir la ruta a absoluta.
 export function pathToAbsolute(receivedPath) {
   if (path.isAbsolute(receivedPath) === false) {
     const pathAbsolute = path.resolve(receivedPath);
-    // console.log('SOY CONVERTIENDO EN ABSOLUTA, ', pathAbsolute);
-    return pathAbsolute;
+        return pathAbsolute;
   } else {
     console.log('LA RUTA YA ERA ABSOLUTA');
     return receivedPath;
   }
 }
-pathToAbsolute(ruta);
 
-// FUNCIÓN para ver si el archivo es md
+// Función para ver si el archivo es md
 export function fileIsMd(receivedPath) {
-  // console.log('Soy un archivo Md ');
   return path.extname(receivedPath) === '.md';
 }
 // console.log(fileIsMd(ruta), 'soy fileismd');
 
-// FUNCIÓN para extraer archivos md RECURSIVIDAD
+
+// Función para comprobar si la ruta es un directorio.
+export function isDirectory(receivedPath) {
+  const directory = fs.statSync(receivedPath);
+  // fs.statSync es una función sincrónica que devuelve un objeto que
+  // contiene información sobre el archivo o directorio.
+  return directory.isDirectory();
+}
+
+// Función para extraer archivos md RECURSIVIDAD
 export const extractMdFiles = (receivedPath) => {
   let mdFiles = [];
 
@@ -58,52 +60,35 @@ export const extractMdFiles = (receivedPath) => {
 
   return mdFiles;
 };
-// console.log('Archivos MD encontrados:', extractMdFiles(ruta));
 
-// FUNCIÓN para comprobar si la ruta es un directorio.
-export function isDirectory(receivedPath) {
-  const directory = fs.statSync(receivedPath);
-  // fs.statSync es una función sincrónica que devuelve un objeto que
-  // contiene información sobre el archivo o directorio.
-  return directory.isDirectory();
-}
-
-// isDirectory(ruta);
-// console.log(isDirectory(ruta), 'ISDIRECTORY');
-
-// FUNCIÓN que lea el array con mdFiles
+// Función que lea el array con mdFiles
 export const readMdfiles = (mdFiles) => {
   const dataMdfiles = [];
   mdFiles.forEach((file) => {
     const content = fs.readFileSync(file, 'utf-8');
     dataMdfiles.push(content);
   });
-  // console.log('dataMdfiles', dataMdfiles)
-  // console.log(dataMdfiles, 'soy dataMdfiles');
   return dataMdfiles;
 };
-//  const contentFileMd = readMdfiles(extractMdFiles(ruta));
 
-// FUNCIÓN para encontrar los enlaces en el contenido de un archivo MD
+// Función para encontrar los enlaces en el contenido de un archivo MD
 export const extractLinksInMd = (dataMdfiles, filePaths) => {
   const regex = /\[(.*?)\]\((.*?)\)/g;
   const allLinks = [];
   dataMdfiles.forEach((content, index) => {
     // Guardar en un array la ruta de cada uno en la recursividad
     const links = [];
-    let match = regex.exec(dataMdfiles);
+    let match = regex.exec(content); // Use content, not dataMdfiles
     while (match !== null) {
-      links.push({ text: match[1], url: match[2], file: filePaths });
-      // console.log('SOY LINKS', links);
-      match = regex.exec(dataMdfiles);
+      links.push({ text: match[1], url: match[2], file: filePaths[index] }); // Use filePaths[index] for the current file
+      match = regex.exec(content);
     }
     allLinks.push(...links);
   });
-  // console.log('allLinks', allLinks)
   return allLinks;
 };
 
-// FUNCIÓN para validar los enlaces encontrados
+// Función para validar los enlaces encontrados
 export function validateLinks(links) {
   const promises = links.map((link) => {
     return axios
@@ -137,7 +122,7 @@ export function validateLinks(links) {
   return Promise.all(promises);
 }
 
-// FUNCIÓN para obtener las estadísticas de los enlaces, incluyendo los broken links
+// Función para obtener las estadísticas de los enlaces, incluyendo los broken links
 export const getLinksStats = (links, optionValidate) =>
     new Promise((resolve, reject) => {
   try {
@@ -158,27 +143,3 @@ export const getLinksStats = (links, optionValidate) =>
     reject(error.message);
   }
 });
-
-// Llamar a la función para obtener los enlaces
-// export const linksInMdFiles = extractLinksInMd(
-//   contentFileMd,
-//   extractMdFiles(ruta),
-// );
-
-// Llamar a la función para validar los enlaces
-// validateLinks(linksInMdFiles)
-//   .then((validatedLinksInMdFiles) => {
-//     // Mostrar los enlaces validados en la consola
-//     console.log('Enlaces válidos y falsos encontrados en los archivos MD:');
-//     console.log(validatedLinksInMdFiles);
-
-//     // Obtener y mostrar las estadísticas de los enlaces, incluyendo los broken links
-//     return getLinksStats(validatedLinksInMdFiles);
-//   })
-//   .then((linksStats) => {
-//     console.log('Estadísticas de los enlaces:');
-//     console.log(linksStats);
-//   })
-//   .catch((error) => {
-//     console.error('Ocurrió un error al validar los enlaces:', error);
-//   });
