@@ -1,5 +1,5 @@
 # Markdown Links
-<images src="./images/md-links.png">
+<img src="./images/md-links.png">
 
 ## 1. Preámbulo
 
