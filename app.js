@@ -17,7 +17,6 @@ import {
 } from './functions.js';
 
 export const mdLinks = (ruta, options) => {
-  // console.log(ruta, 'soy ruta');
   return new Promise((resolve, reject) => { // new promise realizará operaciones asíncronas y se resolverá o rechazará cuando las operaciones se completen
     let routeAbsolute = '';
     const isExists = existsPath(ruta);
@@ -33,12 +32,10 @@ export const mdLinks = (ruta, options) => {
       archivos = extractMdFiles(routeAbsolute);
     } else if (fileIsMd(routeAbsolute)) {
       archivos.push(routeAbsolute);
-      // console.log(archivos, 'soy archivos');
     }
 
     const mdArrayData = readMdfiles(archivos);
     const objectLinks = extractLinksInMd(mdArrayData, archivos);
-    // console.log('Hola', objectLinks);
 
     if (options.validate && options.stats) {
       validateLinks(objectLinks)

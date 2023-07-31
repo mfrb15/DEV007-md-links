@@ -25,7 +25,7 @@ mdLinks(ruta, options)
       console.log(chalk.bold.yellowBright('Unique: ', links.unique));
     } else if (options.validate) {
       links.forEach((link) => {
-        console.log(chalk.bold.magenta(`
+        console.log(chalk.cyanBright(`
         url: ${link.url}
         text: ${link.text}
         file: ${link.file}
@@ -34,7 +34,7 @@ mdLinks(ruta, options)
       });
     } else {
       links.forEach((link) => {
-        console.log(chalk.bold.magenta(`
+        console.log(chalk.bold.cyanBright(`
       url: ${link.url}
       text: ${link.text}
       file: ${link.file}

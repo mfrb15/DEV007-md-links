@@ -33,8 +33,6 @@ export function pathToAbsolute(receivedPath) {
 export function fileIsMd(receivedPath) {
   return path.extname(receivedPath) === '.md';
 }
-// console.log(fileIsMd(ruta), 'soy fileismd');
-
 
 // Función para comprobar si la ruta es un directorio.
 export function isDirectory(receivedPath) {
@@ -95,8 +93,7 @@ export function validateLinks(links) {
       .get(link.url)
       .then((response) => {
         const isValid = response.status >= 200 && response.status < 400;
-        // console.log('Soy es valid', isValid);
-        return {
+                return {
           ...link,
           status: response.status,
           OK: isValid ? 'OK' : 'FAIL',
@@ -104,8 +101,7 @@ export function validateLinks(links) {
       })
       .catch((error) => {
         if (error.response) {
-          // console.log(40000, 'ERROR-RESPONSE', error.response.status);
-          return {
+                return {
             ...link,
             status: error.response.status,
             OK: 'FAIL',
@@ -135,9 +131,7 @@ export const getLinksStats = (links, optionValidate) =>
       stats.broken = links.filter((link) => link.OK == 'FAIL').length;
 
       stats.working = links.filter((link) => link.OK == 'OK').length;
-      console.log(stats);
-
-    }
+        }
     resolve(stats);
   } catch (error) {
     reject(error.message);
