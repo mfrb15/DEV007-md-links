@@ -20,7 +20,7 @@ algunas estadísticas.
 
 ## 2. Resumen del proyecto
 
-En este proyecto es una herramienta de línea de comando (CLI) y librería en JavaScript, que se ejecuta a través de Node.js 
+En este proyecto es una herramienta de línea de comando (CLI) y librería en JavaScript, que se ejecuta a través de Node.js
 que es un entorno de ejecución para JavaScript construido con el [motor de JavaScript V8 de Chrome](https://developers.google.com/v8/).
 que nos permite ejecutar Javascript en el entorno del sistema operativo, ya sea tu máquina o un servidor, lo cual nos abre las puertas para poder
 interactuar con el sistema en sí, archivos, redes, etc.
@@ -73,19 +73,19 @@ También podemos combinar <code>--stats</code> y <code>--validate</code> para ob
 
 <code>{Total: 3, Unique: 3, Broken: 1}</code>
 
-## Diagrama de flujo 
+## Diagrama de flujo
 <img src="./images/diagrama.png">
 
 ## Instalación e Instrucciones uso
-#### Instalación 
-Para instalar la libreria posicionese dentro de su carpeta y abra la terminal para colocar el siguiente comando: 
+#### Instalación
+Para instalar la libreria posicionese dentro de su carpeta y abra la terminal para colocar el siguiente comando:
 <code>npm i md-links-mafer-rodriguez</code>
 
 #### Modo de uso
-El ejecutable de esta aplicación se realiza de siguiente manera a través de la terminal: 
+El ejecutable de esta aplicación se realiza de siguiente manera a través de la terminal:
 <code> mdLinks path-to-file [options] </code>
 
-1.- Si ejecutamos en nuestra terminal el argumento <code>path</code>, de esta manera: <code> mdLinks path-to-file </code> le estamos indicando a la herramienta la ruta del archivo que quieres revisar, puede ser una ruta relativa o absoluta. y nos retornará un resumento de los links de esa ruta. Lo cual se verá de la siguiente manera: 
+1.- Si ejecutamos en nuestra terminal el argumento <code>path</code>, de esta manera: <code> mdLinks path-to-file </code> le estamos indicando a la herramienta la ruta del archivo que quieres revisar, puede ser una ruta relativa o absoluta. y nos retornará un resumento de los links de esa ruta. Lo cual se verá de la siguiente manera:
 <img src="./images/notOptions.png">
 
 2.- Si ejecutamos en nuestra terminal el argumento <code> [options] </code>, de las cuales tenemos disponibles:
@@ -103,14 +103,16 @@ El ejecutable de esta aplicación se realiza de siguiente manera a través de la
 ## Planificación de Proyecto:
 
 Este proyecto se realizó en 4 sprints, utilizando la herramienta de [GIT HUB PROJECTS](https://github.com/Laboratoria/DEV007-md-links)
+<img src="./images/GIT-HUB-PROJECTS.png">
 
 
 
 
 
 
- 
- 
+
+
+
 
 
 
