@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "md-links-mafer-rodriguez",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "engines": {
     "node": ">=16.x"
   },
@@ -31,7 +31,9 @@
   },
   "dependencies": {
     "axios": "^1.4.0",
-    "eslint-config-airbnb": "^19.0.4"
+    "eslint-config-airbnb": "^19.0.4",
+    "md-links-mafer-rodriguez": "^1.0.0",
+    "chalk": "^5.3.0"
   },
   "prettier": {
     "singleQuote": true
@@ -39,9 +41,9 @@
   "description": "* [1. Preámbulo](#1-preámbulo)\r * [2. Resumen del proyecto](#2-resumen-del-proyecto)\r * [3. Objetivos de aprendizaje](#3-objetivos-de-aprendizaje)\r * [4. Consideraciones generales](#4-consideraciones-generales)\r * [5. Criterios de aceptación mínimos del proyecto](#5-criterios-de-aceptación-mínimos-del-proyecto)\r * [6. Entregables](#6-entregables)\r * [7. Hacker edition](#7-hacker-edition)\r * [8. Pistas, tips y lecturas complementarias](#8-pistas-tips-y-lecturas-complementarias)\r * [9. Checklist](#9-checklist)\r * [10. Achicando el problema](#10-achicando-el-problema)",
   "main": "cli.js",
   "bin": {
-    "mdL": "mdLinks"
+    "mdLinks": "cli.js"
   },
-    "directories": {
+  "directories": {
     "test": "test"
   },
   "author": "Mafer-Rodriguez",
