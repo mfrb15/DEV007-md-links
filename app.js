@@ -23,8 +23,7 @@ export const mdLinks = (ruta, options) => {
     if (isExists) {
       routeAbsolute = pathToAbsolute(ruta);
     } else {
-      reject(Error('Tu ruta no existe'));
-      return;
+      reject(console.log('Tu ruta no existe'));
     }
 
     let archivos = [];
