@@ -23,7 +23,7 @@ export const mdLinks = (ruta, options) => {
     if (isExists) {
       routeAbsolute = pathToAbsolute(ruta);
     } else {
-      reject(console.log('Tu ruta no existe'));
+      reject(new Error('Tu ruta no existe'));
     }
 
     let archivos = [];
@@ -32,9 +32,16 @@ export const mdLinks = (ruta, options) => {
     } else if (fileIsMd(routeAbsolute)) {
       archivos.push(routeAbsolute);
     }
+    if (archivos.length === 0) {
+      reject(new Error('No se encontraron archivos md'));
+    }
 
     const mdArrayData = readMdfiles(archivos);
     const objectLinks = extractLinksInMd(mdArrayData, archivos);
+
+    if (objectLinks.length === 0) {
+      console.log('No se encontraron links');
+    }
 
     if (options.validate && options.stats) {
       validateLinks(objectLinks)
@@ -46,7 +53,6 @@ export const mdLinks = (ruta, options) => {
         })
         .catch((error) => {
           console.error('Ocurrió un error al validar los enlaces:', error);
-          reject(error);
         });
     } else if (options.validate) {
       validateLinks(objectLinks)
@@ -55,7 +61,6 @@ export const mdLinks = (ruta, options) => {
         })
         .catch((error) => {
           console.error('Ocurrió un error al validar los enlaces:', error);
-          reject(error);
         });
     } else if (options.stats) {
       getLinksStats(objectLinks)
@@ -64,7 +69,6 @@ export const mdLinks = (ruta, options) => {
         })
         .catch((error) => {
           console.error('Ocurrió un error al obtener las estadísticas:', error);
-          reject(error);
         });
     } else {
       resolve(objectLinks);

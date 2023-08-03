@@ -7,10 +7,8 @@ import path from 'path';
 
 import axios from 'axios';
 
-const ruta = process.argv[2];
 
 export function existsPath(receivedPath) {
-  // parametro
   if (fs.existsSync(receivedPath)) {
     return true;
   } else {
@@ -32,6 +30,7 @@ export function pathToAbsolute(receivedPath) {
 // Función para ver si el archivo es md
 export function fileIsMd(receivedPath) {
   return path.extname(receivedPath) === '.md';
+
 }
 
 // Función para comprobar si la ruta es un directorio.
@@ -44,25 +43,25 @@ export function isDirectory(receivedPath) {
 
 // Función para extraer archivos md RECURSIVIDAD
 export const extractMdFiles = (receivedPath) => {
-  let mdFiles = [];
+  let pathTofiles = []; // Almacena las rutas a los archivos Markdown encontrados.
 
   if (fs.statSync(receivedPath).isDirectory()) {
     const files = fs.readdirSync(receivedPath);
     files.forEach((file) => {
-      const pathFiles = path.join(receivedPath, file);
-      mdFiles = mdFiles.concat(extractMdFiles(pathFiles));
+      const pathAndFiles = path.join(receivedPath, file);
+      pathTofiles = pathTofiles.concat(extractMdFiles(pathAndFiles));
     });
   } else if (path.extname(receivedPath) === '.md') {
-    mdFiles.push(receivedPath);
+    pathTofiles.push(receivedPath);
   }
 
-  return mdFiles;
+  return pathTofiles;
 };
 
-// Función que lea el array con mdFiles
-export const readMdfiles = (mdFiles) => {
+// Función que lea el array con pathTofiles
+export const readMdfiles = (pathTofiles) => {
   const dataMdfiles = [];
-  mdFiles.forEach((file) => {
+  pathTofiles.forEach((file) => {
     const content = fs.readFileSync(file, 'utf-8');
     dataMdfiles.push(content);
   });
@@ -70,25 +69,26 @@ export const readMdfiles = (mdFiles) => {
 };
 
 // Función para encontrar los enlaces en el contenido de un archivo MD
-export const extractLinksInMd = (dataMdfiles, filePaths) => {
+export const extractLinksInMd = (dataMdfiles, fileAndPaths) => {
   const regex = /\[(.*?)\]\((.*?)\)/g;
   const allLinks = [];
   dataMdfiles.forEach((content, index) => {
     // Guardar en un array la ruta de cada uno en la recursividad
     const links = [];
-    let match = regex.exec(content); // Use content, not dataMdfiles
+    let match = regex.exec(content);
     while (match !== null) {
-      links.push({ text: match[1], url: match[2], file: filePaths[index] }); // Use filePaths[index] for the current file
+      links.push({ text: match[1], url: match[2], file: fileAndPaths[index] });
       match = regex.exec(content);
     }
     allLinks.push(...links);
+
   });
   return allLinks;
 };
 
 // Función para validar los enlaces encontrados
 export function validateLinks(links) {
-  const promises = links.map((link) => {
+  const promises = links.map((link) => { // cada elemento de promises es una promesa que espera la solicitud http
     return axios
       .get(link.url)
       .then((response) => {
@@ -124,7 +124,7 @@ export const getLinksStats = (links, optionValidate) =>
   try {
     let stats = {
       total: links.length,
-      unique: new Set(links.map((link) => link.url)).size,
+      unique: new Set(links.map((link) => link.url)).size, // Set para eliminar duplicados, obteniendo así el número de enlaces únicos
     };
     if (optionValidate) {
 

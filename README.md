@@ -83,7 +83,7 @@ Para instalar la libreria posicionese dentro de su carpeta y abra la terminal pa
 
 #### Modo de uso
 El ejecutable de esta aplicación se realiza de siguiente manera a través de la terminal:
-<code> mdLinks path-to-file [options] </code>
+<code> npx mdLinks path-to-file [options] </code>
 
 1.- Si ejecutamos en nuestra terminal el argumento <code>path</code>, de esta manera: <code> mdLinks path-to-file </code> le estamos indicando a la herramienta la ruta del archivo que quieres revisar, puede ser una ruta relativa o absoluta. y nos retornará un resumento de los links de esa ruta. Lo cual se verá de la siguiente manera:
 <img src="./images/notOptions.png">

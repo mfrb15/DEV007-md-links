@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "md-links-mafer-rodriguez",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "engines": {
     "node": ">=16.x"
   },
